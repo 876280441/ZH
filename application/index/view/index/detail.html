@@ -1,0 +1,151 @@
+{extend name="public/base"/}
+{block name="body"}
+</div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="page-header">
+            <h2>{$art.id|getCateName}</h2>
+        </div>
+        <div>
+            <div>
+                <h4><a href="{:url('index/detail',['id'=>$art.id])}">{$art.title}</a></h4>
+                <p>发布者:{$art.user_id|getUserName}&nbsp;&nbsp;&nbsp;&nbsp;
+                    发布时间:{$art.create_time|date='Y-m-d'}&nbsp;&nbsp;&nbsp;&nbsp;
+                    阅读量：{$art.pv}
+                </p>
+                <div>{$art.content|getArtContents}</div>
+                <hr>
+                <button class="btn btn-default" type="button" id="fav" user_id="{$art.user_id}" article_id='{$art.id}'
+                        session_id="{$Think.session.user_id}">
+                    收藏
+                </button>
+                <button class="btn btn-warning" type="button" id="good" user_id="{$art.user_id}" article_id='{$art.id}'
+                        session_id="{$Think.session.user_id}">
+                    点赞
+                </button>
+                <script type="text/javascript">
+                    //收藏
+                    $(function () {
+                        $('#fav').on('click', function () {
+                            //获取当前用户的id和文章的id
+                            var userId = $(this).attr('user_id');
+                            var artId = $(this).attr('article_id');
+                            var sessionId = $(this).attr('session_id');
+                            if (userId && artId) {
+                                $.ajax({
+                                        type: 'get',
+                                        url: "{:url('index/fav')}",
+                                        data: {
+                                            user_id: userId,
+                                            article_id: artId,
+                                            session_id: sessionId,
+                                            time: new Date().getTime()
+                                        },
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            switch (data.status) {
+                                                case 1:
+                                                    $("#fav").attr('class', 'btn btn-success')
+                                                    $('#fav').text(data.message)
+                                                    break
+                                                case 0:
+                                                    $("#fav").attr('class', 'btn btn-default')
+                                                    $('#fav').text(data.message)
+                                                    break
+                                                case -1:
+                                                    alert(data.message)
+                                                    break
+                                                case -2:
+                                                    alert(data.message)
+                                                    window.location.href = "{:url('index/user/login')}"
+                                                    break
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        });
+                    });
+                </script>
+            </div>
+            {//添加表单评论功能}
+            <div>
+                <h4>发表评论</h4>
+                <form class="form-horizontal" id="comment">
+                    <input type="hidden" name="art_id" value="{$art.id}">
+                    <input type="hidden" name="user_id" value="{$art.user_id}">
+                    <textarea name="content" id="" cols="70" rows="10"></textarea>
+                    <button class="btn btn-info" type="button" id="submit">提交</button>
+                </form>
+                <p class="text-success" id="res"></p>
+                {//Ajax提交}
+                <script>
+                    $('#submit').on('click',function () {
+                        $.get("{:url('insertComment')}",$('#comment').serialize(),function (data) {
+                                if (data.status==1){
+                                    $("#res").text(data.message)
+                                }else{
+                                    $("#res").text(data.message)
+                                }
+                        })
+                    })
+                </script>
+            </div>
+            <script>
+                //点赞
+                $(function () {
+                    $('#good').on('click', function () {
+                        //获取当前用户的id和文章的id
+                        var userId = $(this).attr('user_id');
+                        var artId = $(this).attr('article_id');
+                        var sessionId = $(this).attr('session_id');
+                        if (userId && artId) {
+                            $.ajax({
+                                    type: 'get',
+                                    url: "{:url('index/good')}",
+                                    data: {
+                                        user_id: userId,
+                                        article_id: artId,
+                                        session_id: sessionId,
+                                        time: new Date().getTime()
+                                    },
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        switch (data.status) {
+                                            case 1:
+                                                $("#good").attr('class', 'btn btn-success')
+                                                $('#good').text(data.message)
+                                                break
+                                            case 0:
+                                                $("#good").attr('class', 'btn btn-default')
+                                                $('#good').text(data.message)
+                                                break
+                                            case -1:
+                                                alert(data.message)
+                                                break
+                                            case -2:
+                                                alert(data.message)
+                                                window.location.href = "{:url('index/user/login')}"
+                                                break
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    });
+                });
+            </script>
+            <h4>评论列表</h4>
+            <div style="border: 1px solid indigo">
+            {volist name="commentList" id="comment" empty="没有评论"}
+            <div>
+                <p><span style="color: #999999">用户名:</span><span style="color: red">{$comment.user_id|getUserName}</span>&nbsp;&nbsp;&nbsp;&nbsp;时间:{$comment.create_time}</p>
+                <span style="color: darkslateblue">评论内容:</span><div style="min-height: 50px">{$comment.content}
+                <hr></div>
+            </div>
+            {/volist}
+            </div>
+        </div>
+    </div>
+    {/block}

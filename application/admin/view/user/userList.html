@@ -1,0 +1,51 @@
+{layout name="public/layout"/}
+<h4 class="text-center text-success">用户列表</h4>
+<table class="table table-default table-hover text-center">
+    <tr>
+        <td>ID</td>
+        <td>用户名</td>
+        <td>邮箱</td>
+        <td>手机号</td>
+        <td>注册时间</td>
+        <td>身份</td>
+        <td>状态</td>
+        <td colspan="2">操作</td>
+    </tr>
+    {volist name="userList" id="user" empty="$empty"}
+    <tr>
+        <td>{$user.id}</td>
+        <td>{$user.name}</td>
+        <td>{$user.email}</td>
+        <td>{$user.mobile}</td>
+        <td>{$user.create_time}</td>
+        {eq name="$user.is_admin" value="1"}
+        <td class="text-danger">超级管理员</td>
+        {/eq}
+        {eq name="$user.is_admin" value="0"}
+        <td class="text-muted">普通会员</td>
+        {/eq}
+        {eq name="$user.status" value="0"}
+        <td class="text-muted">状态异常</td>
+        {/eq}
+        {eq name="$user.status" value="1"}
+        <td class="text-capitalize">正常</td>
+        {/eq}
+        <!--非当前用户是不允许编辑其他用户资料的-->
+        <!--判断是否为当前用户，-->
+        {eq name="$user.id" value="$Think.session.admin_id"}
+        <td><a href="{:url('user/useredit',['id'=>$user.id])}" class="text-danger">编辑</a></td>
+        {/eq}
+        <!--如果不是当前用户，只能是允许编辑自己的资料，不能动其他人的资料-->
+        {neq name="$user.id" value="$Think.session.admin_id"}
+        <td><a href="javascript:" onclick="dele()">删除</a></td>
+        {/neq}
+    </tr>
+    {/volist}
+</table>
+<script type="text/javascript">
+    function dele() {
+        if (confirm('确定要删除吗？')===true){
+            window.location.href="{:url('user/doDelete',['id'=>$user.id])}"
+        }
+    }
+</script>

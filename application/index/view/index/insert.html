@@ -1,0 +1,61 @@
+{extend name="public/base"}
+{block name="body"}
+</div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="page-header">
+            <h2 style="color: red">发布文章</h2>
+        </div>
+        <form method="post" id="login" action="{:url('index/index/save')}" enctype="multipart/form-data">
+            <!--由于需要知道是哪个作者发布的栏目，需要知道发布者的id，这里把他隐藏起来，但是值可以传递-->
+            <input type="hidden" name="user_id" value="{$Think.session.user_id}">
+            <div class="form-group">
+                <label for="title" class="control-label">标题：</label>
+                <input type="text" name="title" class="form-control" id="title" placeholder="文章标题">
+            </div>
+            <div class="form-group">
+                <label for="title" class="control-label">分类：</label>
+                <select name="cate_id" id="" class="form-control">
+                    <!--读取栏目信息-->
+                    {volist name="cateList" id="cate"}
+                    <option value="{$cate.id}">{$cate.name}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="title" class="control-label">内容</label>
+                <textarea class="form-control" name="content" id="content" style="min-height: 250px"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="title_img" class="control-label">标题图片</label>
+                <input type="file" name="title_img" class="form-control" id="title_img" placeholder="标题图片">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" id="submit">保存</button>
+            </div>
+        </form>
+        <!--
+        <script type="text/javascript">
+            $(function(){
+                $("#register").on('click',function() {
+                    $.ajax({
+                        type:'post',
+                        url:"{:url('insert')}",
+                        data:$("#login").serialize(),
+                        dataType:'json',
+                        success:function (data) {
+                            alert('成功了')
+                        }
+                    })
+                })
+            })
+        </script>
+        -->
+    </div>
+    <script>
+        bkLib.onDomLoaded(function () {
+            new nicEditor({iconsPath: '/zh/public/static/js/nicEditorIcons.gif'}).panelInstance('content');
+        });
+    </script>
+    {/block}

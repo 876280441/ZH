@@ -1,0 +1,33 @@
+{layout name="public/layout"/}
+<h4 class="text-center text-success">文章编辑</h4>
+<form method="post" id="login" action="{:url('article/doEdit')}" enctype="multipart/form-data">
+    <!--由于需要知道是哪个作者发布的栏目，需要知道发布者的id，这里把他隐藏起来，但是值可以传递-->
+    <input type="hidden" name="id" value="{$artInfo.id}">
+    <div class="form-group">
+        <label for="title" class="control-label">标题：</label>
+        <input type="text" name="title" class="form-control" id="title" value="{$artInfo.title}">
+    </div>
+    <div class="form-group">
+        <label for="title" class="control-label">分类：</label>
+        <select name="cate_id" id="" class="form-control">
+            <!--读取栏目信息-->
+            {volist name="cateList" id="cate"}
+            <option value="{$cate.id}">{$cate.name}</option>
+            {/volist}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="title" class="control-label">内容</label>
+        <textarea class="form-control" name="content" id="content" style="min-height: 250px" >
+            {$artInfo.content}
+        </textarea>
+        <img src="/zhs/public/uploads/{$artInfo.title_img}" class="img-rounded" alt="" width="100px"/>
+    </div>
+    <div class="form-group">
+        <label for="title_img" class="control-label">标题图片</label>
+        <input type="file" name="title_img" class="form-control" id="title_img" placeholder="标题图片">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="submit">保存</button>
+    </div>
+</form>
